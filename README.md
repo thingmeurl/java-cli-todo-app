@@ -31,5 +31,5 @@
 ## ▶ 実行方法
 1. このリポジトリをクローン：
    ```bash
-   git clone https://github.com/your-username/todo-cli-java.git
-   cd todo-cli-java
+   git clone https://github.com/thingmeurl/java-cli-todo-app.git
+   cd java-cli-todo-app
