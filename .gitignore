@@ -35,6 +35,7 @@ out/
 # ログや一時ファイル
 *.log
 *.tmp
+task.txt
 
 # OSやIDE関連
 .DS_Store
