@@ -1,5 +1,6 @@
 package task;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class TaskManager {
     }
 
     public void printTaskList() {
-        System.out.println("\n📋 あなたのタスク一覧");
+        System.out.println("\n あなたのタスク一覧");
         System.out.println("==================================================================");
         System.out.printf("%-4s%-8s%-20s%-10s%-12s\n", "#", "状態", "タイトル", "優先度", "締切");
         System.out.println("==================================================================");
@@ -154,7 +155,8 @@ public class TaskManager {
 
     // ファイル保存
     public void saveTasksToFile() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME))){
+        try (PrintWriter writer = new PrintWriter(
+                new OutputStreamWriter(new FileOutputStream(FILE_NAME), StandardCharsets.UTF_8))){
             for (Task task : tasks) {
                 writer.println(task.toCSV());
             }
@@ -169,7 +171,8 @@ public class TaskManager {
         File file = new File(FILE_NAME);
         if (!file.exists()) return;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))){
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(FILE_NAME), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 Task.fromCSV(line).ifPresent(tasks::add);
@@ -178,11 +181,12 @@ public class TaskManager {
             System.out.println("ファイル読み込み中にエラーが発生しました" + e.getMessage());
         }
     }
+
     public void notifyDueTasks(){
         LocalDate today = LocalDate.now();
         boolean hasDueTasks = false;
 
-        System.out.println("\n⏰ 締切が今日または過去のタスク:");
+        System.out.println("\n 締切が今日または過去のタスク:");
         System.out.println("======================================");
 
         for (Task task : tasks) {
