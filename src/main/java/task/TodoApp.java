@@ -41,7 +41,7 @@ public class TodoApp {
                     taskManager.toggleTaskStatus(input);
                     break;
                 case "5":
-                    System.out.println("\n👋 アプリを終了します。お疲れさまでした！");
+                    System.out.println("\nアプリを終了します。お疲れさまでした！");
                     input.close();
                     return;
                 default:
