@@ -36,11 +36,13 @@
     - タイトル、優先度（高/中/低）、期限日を指定して追加。
 2. **タスク一覧表示**
     - 完了状態 `[✓]` または `[ ]` を表示。
-3. **タスク削除**
+3. **タスク編集**
+    - 指定した番号のタスクを編集。
+4. **タスク削除**
     - 指定した番号のタスクを削除。
-4. **完了フラグ切り替え**
+5. **完了フラグ切り替え**
     - 指定タスクの完了⇔未完了を切り替え。
-5. **永続化**
+6. **永続化**
     - `task.txt` にUTF-8で保存・読み込み。
 
 ---
@@ -69,6 +71,46 @@
     java -Dfile.encoding=UTF-8 task.TodoApp
     ```
 
+---
+## 🚦 優先度（Priority）機能の導入（2025-07）
+
+本アプリでは、タスクの重要度を表すために `Priority` 列挙型（enum）を導入しました。これにより、可読性・保守性が向上し、後続の機能追加にも柔軟に対応できるようになります。
+
+### 📌 実装背景
+
+従来は優先度を `String` 型（例："高", "中", "低"）で扱っていましたが、以下のような課題がありました：
+
+- 入力ミスに弱く、誤った文字列が混入する可能性がある
+- 比較や分岐処理のたびに文字列と照合が必要で冗長
+- 値の意味がコード上で曖昧
+
+これらを解消するため、列挙型 `Priority` を導入しました。
+
+```java
+public enum Priority {
+    HIGH,
+    MEDIUM,
+    LOW;
+
+    public static Priority fromString(String value) {
+        switch (value) {
+            case "高": return HIGH;
+            case "中": return MEDIUM;
+            case "低": return LOW;
+            default: throw new IllegalArgumentException("無効な優先度: " + value);
+        }
+    }
+
+    public String toLocalizedString() {
+        switch (this) {
+            case HIGH: return "高";
+            case MEDIUM: return "中";
+            case LOW: return "低";
+            default: return "";
+        }
+    }
+}
+```
 ---
 
 ## 🔧 Maven対応（2025-07）

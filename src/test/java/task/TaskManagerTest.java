@@ -3,10 +3,11 @@ package task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static task.Priority.*;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+//import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TaskManagerTest {
@@ -36,15 +37,15 @@ public class TaskManagerTest {
         assertEquals(1, tasks.size());
         assertFalse(tasks.get(0).isDone());
         assertEquals("テストタスク",tasks.get(0).getTitle());
-        assertEquals("中",tasks.get(0).getPriority());
+        assertEquals(MEDIUM,tasks.get(0).getPriority());
         assertEquals(LocalDate.of(2025,7,25),tasks.get(0).getDueDate());
 
     }
 
     @Test
     void testAddMultipleTasks() {
-        Task task1 = new Task("タスク1", false, "高",LocalDate.now());
-        Task task2 = new Task("タスク2", true, "中",LocalDate.now().plusDays(1));
+        Task task1 = new Task("タスク1", false, Priority.HIGH,LocalDate.now());
+        Task task2 = new Task("タスク2", true, Priority.MEDIUM,LocalDate.now().plusDays(1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
 
@@ -55,7 +56,7 @@ public class TaskManagerTest {
     }
     @Test
     void testRemoveTask() {
-        Task task = new Task("削除対象", false, "低",LocalDate.now());
+        Task task = new Task("削除対象", false, Priority.LOW,LocalDate.now());
         taskManager.addTask(task);
         taskManager.removeTask(0);
 
@@ -64,16 +65,16 @@ public class TaskManagerTest {
     }
     @Test
     void testUpdateTask(){
-        Task task = new Task("元タイトル",false,"低",LocalDate.now());
+        Task task = new Task("元タイトル",false,Priority.LOW,LocalDate.now());
         taskManager.addTask(task);
 
-        Task updateTask = new Task("更新済タイトル",true,"高",LocalDate.now().plusDays(5));
+        Task updateTask = new Task("更新済タイトル",true,Priority.HIGH,LocalDate.now().plusDays(5));
         taskManager.updateTask(0, updateTask);
 
         Task result = taskManager.getTasks().get(0);
         assertEquals("更新済タイトル",result.getTitle());
         assertEquals(true,result.isDone());
-        assertEquals("高",result.getPriority());
+        assertEquals(HIGH,result.getPriority());
     }
 
     @Test
@@ -91,7 +92,7 @@ public class TaskManagerTest {
 
     @Test
     void testDeleteTask(){
-        taskManager.addTask(new Task("削除テスト",false,"高",LocalDate.now()));
+        taskManager.addTask(new Task("削除テスト",false,Priority.HIGH,LocalDate.now()));
         assertEquals(1, taskManager.getTasks().size());
 
         MockInputProvider input = new MockInputProvider("1");
@@ -102,7 +103,7 @@ public class TaskManagerTest {
 
     @Test
     void testDeleteTaskInvalidIndex() {
-        taskManager.addTask(new Task("削除タスク",false,"高",LocalDate.now()));
+        taskManager.addTask(new Task("削除タスク",false,Priority.HIGH,LocalDate.now()));
         MockInputProvider input = new MockInputProvider("5"); // 存在しない番号
         taskManager.deleteTask(input);
         assertEquals(1,taskManager.getTasks().size()); // 削除されていないことを確認

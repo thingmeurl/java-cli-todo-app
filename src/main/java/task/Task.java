@@ -1,15 +1,17 @@
 package task;
 
+
+
 import java.time.LocalDate;
 import java.util.Optional;
 
 public class Task {
     private String title;
     private boolean done;
-    private String priority;
+    private Priority priority;
     private LocalDate dueDate;
 
-    public Task(String title, boolean done, String priority, LocalDate dueDate) {
+    public Task(String title, boolean done, Priority priority, LocalDate dueDate) {
         this.title = title;
         this.done = done;
         this.priority = priority;
@@ -31,11 +33,11 @@ public class Task {
         this.done = done;
     }
 
-    public String getPriority(){
+    public Priority getPriority(){
         return priority;
     }
 
-    public void setPriority(String priority){
+    public void setPriority(Priority priority){
         this.priority = priority;
     }
 
@@ -70,7 +72,7 @@ public class Task {
         return String.join(",",
         title,
         Boolean.toString(done),
-        priority != null ? priority : "",
+        priority != null ? priority.toString() : "",
         dueDate != null ? dueDate.toString() : "");
     }
 
@@ -81,10 +83,10 @@ public class Task {
             if (parts.length < 4) return Optional.empty();
             String title = parts[0];
             boolean isDone = Boolean.parseBoolean(parts[1]);
-            String priority = parts[2].isEmpty() ? null : parts[2];
+            Priority priority = parts[2].isEmpty() ? null : Priority.fromString(parts[2]);
             LocalDate dueDate = parts[3].isEmpty() ? null : LocalDate.parse(parts[3]);
-
             return Optional.of(new Task(title, isDone, priority, dueDate));
+
         } catch (Exception e) {
             System.out.println("CSV読み込みエラー：" + e.getMessage());
             return Optional.empty();

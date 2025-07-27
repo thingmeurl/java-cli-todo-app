@@ -2,6 +2,7 @@ package task;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -50,8 +51,16 @@ public class TaskManager {
         String doneInput = input.nextLine();
         boolean isDone = doneInput.equalsIgnoreCase("yes");
 
-        System.out.println("優先度を入力してください（例：高・中・低）：");
-        String priority = input.nextLine();
+        Priority priority = null;
+        while (priority == null) {
+            System.out.println("優先度を入力してください（例：高・中・低）：");
+            String priorityInput = input.nextLine();
+            try {
+                priority = Priority.fromString(priorityInput);
+            } catch (IllegalArgumentException e) {
+                System.out.println("無効な優先度です。再度入力してください。");
+            }
+        }
 
         System.out.println("締切日を入力してください（例：2025-07-21、未入力でスキップ）：");
         String dueDateInput = input.nextLine();
@@ -181,6 +190,66 @@ public class TaskManager {
             System.out.println("ファイル読み込み中にエラーが発生しました" + e.getMessage());
         }
     }
+
+    // タスク編集
+    public void editTask(int index, InputProvider input){
+        if(index < 0 || index >= tasks.size()) {
+            System.out.println("無効なインデックスです。");
+            return;
+        }
+
+        Task oldTask = tasks.get(index);
+
+        System.out.println("現在のタスク名：" + oldTask.getTitle());
+        System.out.print("新しいタスク名（空で変更なし）：");
+        String newTitle = input.nextLine();
+        if(!newTitle.trim().isEmpty()) {
+            oldTask.setTitle(newTitle);
+        }
+
+        System.out.println("現在の優先度：" + oldTask.getPriority());
+        System.out.print("新しい優先度（低/中/高、空で変更なし）：");
+        String newPriority = input.nextLine();
+        if (!newPriority.isEmpty()) {
+            try{
+                Priority priority = Priority.fromString(newPriority);
+                oldTask.setPriority(priority);
+            } catch (IllegalArgumentException e) {
+                System.out.println("無効な優先度です。変更をスキップします。");
+            }
+        }
+
+        System.out.println("現在の状態：" + (oldTask.isDone() ? "完了" : "未完了"));
+        System.out.print("完了していますか？（yes/no、空で変更なし）：");
+        String doneInput = input.nextLine().trim().toLowerCase();
+
+        if (!doneInput.isEmpty()){
+            if (doneInput.equals("yes")) {
+                oldTask.setDone(true);
+            } else if (doneInput.equals("no")) {
+                oldTask.setDone((false));
+            } else {
+                System.out.println("入力が不正です。変更をスキップしました。");
+            }
+//            System.out.println("入力内容：" + doneInput);
+//            System.out.println("更新後の状態：" + oldTask.isDone());
+        }
+
+        System.out.println("現在の期日：" + (oldTask.getDueDate() != null ? oldTask.getDueDate() : "未設定"));
+        System.out.println("新しい期日を入力（yyyy-MM-dd、空で変更なし）：");
+        String newDueDateStr = input.nextLine();
+        if(!newDueDateStr.trim().isEmpty()) {
+            try {
+                LocalDate newDueDate = LocalDate.parse(newDueDateStr);
+                oldTask.setDueDate(newDueDate);
+            } catch (DateTimeParseException e) {
+                System.out.println("日付の形式が正しくありません。変更をスキップします。");
+            }
+        }
+        saveTasksToFile();
+        System.out.println("タスクを更新しました。");
+    }
+
 
     public void notifyDueTasks(){
         LocalDate today = LocalDate.now();

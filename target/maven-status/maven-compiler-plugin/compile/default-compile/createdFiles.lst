@@ -1,0 +1,6 @@
+task\Task.class
+task\InputProvider.class
+task\Priority.class
+task\TodoApp.class
+task\ConsoleInputProvider.class
+task\TaskManager.class
